@@ -265,6 +265,7 @@ body{
   padding: 20px 18px 18px;
   overflow: hidden;
   pointer-events: none;
+  transform-origin: center center;
 }
 .app-clone::after{
   content: '';
@@ -277,8 +278,14 @@ body{
   animation: appOpen 0.48s cubic-bezier(0.22, 0.45, 0.15, 1) forwards;
 }
 @keyframes appOpen{
-  0%{ border-radius: var(--radius); }
-  100%{ top: 0; left: 0; right: 0; bottom: 0; border-radius: 0; }
+  0%{
+    transform: scale(1);
+    border-radius: var(--radius);
+  }
+  100%{
+    transform: scale(var(--sx), var(--sy));
+    border-radius: 0;
+  }
 }
 
 /* ── Scene dim ── */
@@ -402,14 +409,20 @@ function bindCardClicks() {
       let dim = document.getElementById('sceneDim');
       dim.classList.add('go');
 
+      // Calculate scale to fill viewport from card's center
+      let vw = window.innerWidth, vh = window.innerHeight;
+      let sx = vw / rect.width;
+      let sy = vh / rect.height;
+      let scale = Math.max(sx, sy) * 1.05; // slight overshoot for smoothness
+
       // Clone the card
       let clone = document.createElement('div');
       clone.className = 'app-clone';
-      clone.style.cssText = 'top:' + rect.top + 'px; left:' + rect.left + 'px; width:' + rect.width + 'px; height:' + rect.height + 'px; --accent:' + accent;
+      clone.style.cssText = 'top:' + rect.top + 'px; left:' + rect.left + 'px; width:' + rect.width + 'px; height:' + rect.height + 'px; --accent:' + accent + '; --sx:' + scale + '; --sy:' + scale;
       clone.innerHTML = '<div class="name" style="font-size:' + getComputedStyle(this.querySelector('.name')).fontSize + '">' + name + '</div><div class="desc">' + desc + '</div>';
       document.body.appendChild(clone);
 
-      // Animate clone to full screen
+      // Animate: card stays in place, scales outward from its center
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           clone.classList.add('go');
