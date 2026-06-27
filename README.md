@@ -1,5 +1,9 @@
 # GWY LaunchPad — 公考工具箱启动器
 
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Version](https://img.shields.io/badge/version-1.4.0-brightgreen)](https://github.com/kaXianc2-gom/gwy-launchpad/releases)
+[![Pages](https://img.shields.io/badge/demo-online-0078D4)](https://kaXianc2-gom.github.io/gwy-launchpad/)
+
 > 8 个工具的入口。设置一次偏好，所有工具自动读取。
 
 单文件 HTML，双击即用。7 张工具卡片，点击打开对应工具。
@@ -28,6 +32,16 @@
 ## 数据流
 
 TableNorm → DataVeil → SheetLens → PostCmp → AppTrack（→ ExamPrep / PolicySearch）
+
+## 🌐 在线体验
+
+无需下载，直接使用：**[🔗 在线 Demo](https://kaXianc2-gom.github.io/gwy-launchpad/)**
+
+## 🔐 隐私声明
+
+- **数据不上传**：偏好设置（专业/学历/省份）仅存于浏览器 localStorage
+- **无网络请求**：零外部依赖，运行时无任何网络请求
+- **无追踪**：不使用任何分析或遥测工具
 
 ## 技术
 
