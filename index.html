@@ -248,42 +248,31 @@ body{
 }
 [data-theme="dark"] .card:hover{ box-shadow: 0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px var(--accent, rgba(255,255,255,0.1)); }
 
-/* ── iOS app open ── */
-.app-clone{
+/* ── iOS app open: expanding circle from card center ── */
+.app-open{
   position: fixed; z-index: 1000;
-  background: var(--card-bg);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 0.5px solid var(--card-border);
-  border-radius: var(--radius);
-  display: flex;
-  flex-direction: column;
-  padding: 28px 24px 24px;
-  overflow: hidden;
-  pointer-events: none;
-  transform-origin: center center;
-}
-.app-clone .dot{
-  width: 10px; height: 10px;
   border-radius: 50%;
-  background: var(--accent, #ccc);
-  margin-bottom: 16px;
+  background: var(--accent, #0071e3);
+  pointer-events: none;
+  width: 0; height: 0;
+  transform: translate(-50%, -50%);
 }
-.app-clone.go{
-  animation: appOpen 0.48s cubic-bezier(0.22, 0.45, 0.15, 1) forwards;
+.app-open.go{
+  animation: circleExpand 0.5s cubic-bezier(0.22, 0.45, 0.15, 1) forwards;
 }
-@keyframes appOpen{
-  0%{ transform: scale(1); border-radius: var(--radius); }
-  100%{ transform: scale(var(--sx), var(--sy)); border-radius: 0; }
+@keyframes circleExpand{
+  0%{ width: 0; height: 0; opacity: 0.9; }
+  40%{ opacity: 0.7; }
+  100%{ width: var(--cd); height: var(--cd); opacity: 0; }
 }
 
 .scene-dim{
   position: fixed; inset: 0; z-index: 999;
   background: var(--bg);
   opacity: 0; pointer-events: none;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.25s ease;
 }
-.scene-dim.go{ opacity: 1; }
+.scene-dim.go{ opacity: 1; transition: opacity 0.2s ease 0.25s; }
 
 /* ── Toast ── */
 .toast{
@@ -382,27 +371,27 @@ function bindCardClicks() {
     card.addEventListener('click', function(e) {
       e.preventDefault();
       let href = this.getAttribute('href');
-      let accent = this.getAttribute('data-accent') || '#fff';
+      let accent = this.getAttribute('data-accent') || '#0071e3';
       let rect = this.getBoundingClientRect();
-      let name = this.querySelector('.name').textContent;
-      let desc = this.querySelector('.desc').textContent;
-
+      let cx = rect.left + rect.width / 2;
+      let cy = rect.top + rect.height / 2;
       let vw = window.innerWidth, vh = window.innerHeight;
-      let scale = Math.max(vw / rect.width, vh / rect.height) * 1.05;
+      let diameter = Math.ceil(Math.sqrt(vw*vw + vh*vh)) * 2; // twice diagonal to cover corners
 
+      // Expanding circle from card center
+      let circle = document.createElement('div');
+      circle.className = 'app-open';
+      circle.style.cssText = 'top:' + cy + 'px; left:' + cx + 'px; --accent:' + accent + '; --cd:' + diameter + 'px';
+      document.body.appendChild(circle);
+
+      // Dim behind
       document.getElementById('sceneDim').classList.add('go');
 
-      let clone = document.createElement('div');
-      clone.className = 'app-clone';
-      clone.style.cssText = 'top:' + rect.top + 'px; left:' + rect.left + 'px; width:' + rect.width + 'px; height:' + rect.height + 'px; --accent:' + accent + '; --sx:' + scale + '; --sy:' + scale;
-      clone.innerHTML = '<div class="dot"></div><div class="name" style="font-size:' + getComputedStyle(this.querySelector('.name')).fontSize + '">' + name + '</div><div class="desc">' + desc + '</div>';
-      document.body.appendChild(clone);
-
       requestAnimationFrame(() => {
-        requestAnimationFrame(() => { clone.classList.add('go'); });
+        requestAnimationFrame(() => { circle.classList.add('go'); });
       });
 
-      setTimeout(() => { window.location.href = href; }, 420);
+      setTimeout(() => { window.location.href = href; }, 440);
     });
   });
 }
