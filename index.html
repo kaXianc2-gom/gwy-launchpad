@@ -9,8 +9,8 @@
 <title>公考工具箱</title>
 <style>
 :root {
-  --bg: #f0f0f5;
-  --card-bg: rgba(255,255,255,0.82);
+  --bg: #ececf1;
+  --card-bg: rgba(255,255,255,0.78);
   --card-border: rgba(0,0,0,0.07);
   --text: #1d1d1f;
   --text-secondary: #6e6e73;
@@ -18,23 +18,18 @@
   --fill: rgba(0,0,0,0.05);
   --separator: rgba(0,0,0,0.08);
   --radius: 18px;
-  --spring: 0.35s cubic-bezier(0.22, 0.1, 0.2, 1);
-  --orb-1: rgba(180,160,255,0.12);
-  --orb-2: rgba(140,200,255,0.10);
-  --orb-3: rgba(255,180,140,0.08);
+  --spring: 0.4s cubic-bezier(0.22, 0.1, 0.2, 1);
+  --spring-bounce: 0.5s cubic-bezier(0.22, 0.6, 0.25, 1.2);
 }
 [data-theme="dark"] {
   --bg: #161618;
-  --card-bg: rgba(38,38,40,0.82);
+  --card-bg: rgba(38,38,40,0.8);
   --card-border: rgba(255,255,255,0.07);
   --text: #f5f5f7;
   --text-secondary: #98989d;
   --text-tertiary: #636366;
   --fill: rgba(255,255,255,0.08);
   --separator: rgba(255,255,255,0.1);
-  --orb-1: rgba(120,100,220,0.10);
-  --orb-2: rgba(80,140,220,0.08);
-  --orb-3: rgba(220,140,100,0.06);
 }
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -45,67 +40,146 @@ body{
   color: var(--text);
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
-  transition: background 0.4s ease, color 0.4s ease;
+  transition: background 0.4s ease;
   letter-spacing: -0.01em;
-  position: relative;
   overflow-x: hidden;
 }
 
-/* ── Background orbs ── */
-body::before{
-  content: '';
-  position: fixed;
-  top: -30vh; left: -20vw;
-  width: 70vw; height: 70vh;
-  background: radial-gradient(ellipse at center, var(--orb-1), transparent 70%);
-  pointer-events: none; z-index: 0;
+/* ── Background atmosphere ── */
+.atmo{
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
 }
-body::after{
-  content: '';
-  position: fixed;
-  bottom: -25vh; right: -15vw;
-  width: 65vw; height: 65vh;
-  background: radial-gradient(ellipse at center, var(--orb-2), transparent 70%);
-  pointer-events: none; z-index: 0;
+.atmo .orb{
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.5;
+  animation: orbDrift 20s ease-in-out infinite;
 }
-.bg-orb-3{
-  position: fixed;
-  top: 35vh; left: 50vw;
-  width: 55vw; height: 55vh;
-  background: radial-gradient(ellipse at center, var(--orb-3), transparent 70%);
-  pointer-events: none; z-index: 0;
+.atmo .orb:nth-child(1){
+  width: 55vw; height: 55vw;
+  background: radial-gradient(circle, rgba(140,120,240,0.18), transparent);
+  top: -15vh; left: -15vw;
+  animation-delay: 0s;
+}
+.atmo .orb:nth-child(2){
+  width: 45vw; height: 45vw;
+  background: radial-gradient(circle, rgba(100,160,230,0.14), transparent);
+  bottom: -10vh; right: -10vw;
+  animation-delay: -7s;
+}
+.atmo .orb:nth-child(3){
+  width: 40vw; height: 40vw;
+  background: radial-gradient(circle, rgba(240,160,100,0.12), transparent);
+  top: 40vh; left: 40vw;
+  animation-delay: -14s;
+}
+@keyframes orbDrift{
+  0%,100%{ transform: translate(0,0) scale(1); }
+  25%{ transform: translate(3vw,-2vh) scale(1.08); }
+  50%{ transform: translate(-2vw,3vh) scale(0.94); }
+  75%{ transform: translate(-3vw,-1vh) scale(1.05); }
 }
 
-/* ── Subtle grid overlay ── */
-.bg-grid{
-  position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.25;
+/* ── Grid texture ── */
+.grid-texture{
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.22;
   background-image:
     linear-gradient(var(--separator) 1px, transparent 1px),
     linear-gradient(90deg, var(--separator) 1px, transparent 1px);
-  background-size: 64px 64px;
-  mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 30%, transparent 70%);
-  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 30%, transparent 70%);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(ellipse 70% 55% at 50% 40%, black 25%, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 55% at 50% 40%, black 25%, transparent 70%);
 }
 
-.container{
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 52px 28px 40px;
+/* ── Layout ── */
+.app{
+  display: flex;
+  min-height: 100vh;
   position: relative; z-index: 1;
 }
 
-/* ── Header ── */
+/* ── Left rail: workflow indicator ── */
+.rail{
+  width: 72px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 56px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+.rail-dots{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  position: relative;
+}
+.rail-dots::before{
+  content: '';
+  position: absolute;
+  top: 12px; bottom: 12px; left: 50%;
+  width: 1px;
+  background: var(--separator);
+  transform: translateX(-50%);
+}
+.rail-dot{
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--text-tertiary);
+  transition: all var(--spring);
+  position: relative; z-index: 1;
+  cursor: pointer;
+}
+.rail-dot:hover{
+  background: var(--text-secondary);
+  box-shadow: 0 0 0 6px var(--fill);
+}
+.rail-label{
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 11px;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity var(--spring);
+  pointer-events: none;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+.rail-dot:hover .rail-label{ opacity: 1; }
+
+@media (max-width: 768px){
+  .rail{ display: none; }
+}
+
+/* ── Main content ── */
+.main{
+  flex: 1;
+  max-width: 960px;
+  padding: 52px 32px 40px 8px;
+}
+
 .header{
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 42px;
+  margin-bottom: 44px;
 }
 .header h1{
   font-size: 30px;
   font-weight: 700;
   letter-spacing: -0.025em;
-  color: var(--text);
+  font-feature-settings: "kern" 1;
+  background: linear-gradient(135deg, var(--text) 30%, var(--text-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 .theme-btn{
   width: 38px; height: 38px;
@@ -122,8 +196,7 @@ body::after{
   transition: all var(--spring);
   color: var(--text-secondary);
 }
-.theme-btn:hover{ background: rgba(0,0,0,0.06); transform: scale(1.06); }
-[data-theme="dark"] .theme-btn:hover{ background: rgba(255,255,255,0.1); }
+.theme-btn:hover{ background: rgba(0,0,0,0.06); transform: scale(1.08); }
 
 /* ── Settings ── */
 .settings{
@@ -131,13 +204,15 @@ body::after{
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
-  margin-bottom: 38px;
+  margin-bottom: 40px;
   padding: 14px 20px;
   background: var(--card-bg);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   border: 0.5px solid var(--card-border);
   border-radius: var(--radius);
+  opacity: 0;
+  animation: fadeSlideUp 0.55s var(--spring) 0.1s forwards;
 }
 .settings label{
   font-size: 13px;
@@ -181,7 +256,7 @@ body::after{
   gap: 14px;
 }
 
-/* ── Card ── */
+/* ── Card with staggered entry ── */
 .card{
   display: flex;
   flex-direction: column;
@@ -196,31 +271,43 @@ body::after{
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  opacity: 0;
+  animation: fadeSlideUp 0.5s var(--spring) forwards;
   transition: transform var(--spring), box-shadow var(--spring), border-color var(--spring);
 }
+.card:nth-child(1){ animation-delay: 0.15s; }
+.card:nth-child(2){ animation-delay: 0.2s; }
+.card:nth-child(3){ animation-delay: 0.25s; }
+.card:nth-child(4){ animation-delay: 0.3s; }
+.card:nth-child(5){ animation-delay: 0.35s; }
+.card:nth-child(6){ animation-delay: 0.4s; }
+.card:nth-child(7){ animation-delay: 0.45s; }
+
 .card::after{
   content: '';
   position: absolute;
-  left: 0; top: 12px; bottom: 12px;
+  left: 0; top: 14px; bottom: 14px;
   width: 3px; border-radius: 0 3px 3px 0;
   background: var(--accent, #ccc);
-  opacity: 0.55;
+  opacity: 0.5;
   transition: opacity var(--spring), width var(--spring);
 }
 .card:hover{
-  transform: translateY(-3px) scale(1.012);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.1), 0 0 0 1px var(--accent, rgba(0,0,0,0.08));
+  transform: translateY(-4px) scale(1.015);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.1), 0 0 0 1px var(--accent, rgba(0,0,0,0.1));
   border-color: var(--accent, rgba(0,0,0,0.15));
+  z-index: 2;
 }
 .card:hover::after{ opacity: 1; width: 4px; }
-[data-theme="dark"] .card:hover{ box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 0 1px var(--accent, rgba(255,255,255,0.1)); }
+[data-theme="dark"] .card:hover{ box-shadow: 0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px var(--accent, rgba(255,255,255,0.12)); }
 
 .card .name{
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 600;
   margin-bottom: 5px;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
   padding-left: 4px;
+  font-feature-settings: "kern" 1;
 }
 .card .desc{
   font-size: 13px;
@@ -228,6 +315,40 @@ body::after{
   line-height: 1.55;
   flex: 1;
   padding-left: 4px;
+  letter-spacing: -0.005em;
+}
+
+/* ── Ripple overlay for click animation ── */
+.ripple-overlay{
+  position: fixed; inset: 0; z-index: 999;
+  pointer-events: none;
+  background: radial-gradient(circle at var(--rx) var(--ry), var(--rc, rgba(255,255,255,0.95)) 0%, transparent 70%);
+  opacity: 0;
+  transition: none;
+}
+.ripple-overlay.go{
+  animation: rippleOut 0.55s cubic-bezier(0.22, 0, 0.2, 1) forwards;
+}
+@keyframes rippleOut{
+  0%{ opacity: 0; clip-path: circle(0% at var(--rx) var(--ry)); }
+  30%{ opacity: 1; }
+  100%{ opacity: 0; clip-path: circle(100% at var(--rx) var(--ry)); }
+}
+
+/* ── Page exit overlay (navigating away) ── */
+.exit-overlay{
+  position: fixed; inset: 0; z-index: 998;
+  background: var(--bg);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.exit-overlay.active{ opacity: 1; pointer-events: all; }
+
+/* ── Animations ── */
+@keyframes fadeSlideUp{
+  from{ opacity: 0; transform: translateY(20px); }
+  to{ opacity: 1; transform: translateY(0); }
 }
 
 /* ── Toast ── */
@@ -248,7 +369,7 @@ body::after{
 @keyframes toastOut{ from{ opacity:1; transform:translateX(-50%) translateY(0); } to{ opacity:0; transform:translateX(-50%) translateY(14px); } }
 
 @media (max-width: 640px){
-  .container{ padding: 36px 16px 28px; }
+  .main{ padding: 36px 18px 28px; }
   .header h1{ font-size: 24px; }
   .settings{ flex-direction: column; align-items: stretch; }
   .settings input{ width: 100%; }
@@ -258,10 +379,30 @@ body::after{
 </head>
 <body>
 
-<div class="bg-grid"></div>
-<div class="bg-orb-3"></div>
+<div class="atmo">
+  <div class="orb"></div>
+  <div class="orb"></div>
+  <div class="orb"></div>
+</div>
+<div class="grid-texture"></div>
+<div class="ripple-overlay" id="ripple"></div>
+<div class="exit-overlay" id="exitOverlay"></div>
 
-<div class="container">
+<div class="app">
+
+<div class="rail">
+  <div class="rail-dots">
+    <div class="rail-dot" data-tool="table-norm"><span class="rail-label">清洗</span></div>
+    <div class="rail-dot" data-tool="data-veil"><span class="rail-label">脱敏</span></div>
+    <div class="rail-dot" data-tool="sheet-lens"><span class="rail-label">筛选</span></div>
+    <div class="rail-dot" data-tool="post-cmp"><span class="rail-label">对比</span></div>
+    <div class="rail-dot" data-tool="app-track"><span class="rail-label">追踪</span></div>
+    <div class="rail-dot" data-tool="exam-prep"><span class="rail-label">刷题</span></div>
+    <div class="rail-dot" data-tool="policy-search"><span class="rail-label">政策</span></div>
+  </div>
+</div>
+
+<div class="main">
 
 <div class="header">
   <h1>公考工具箱</h1>
@@ -288,6 +429,7 @@ body::after{
 <div class="grid" id="toolGrid"></div>
 
 </div>
+</div>
 
 <script>
 "use strict";
@@ -305,14 +447,69 @@ const TOOLS = [
 function renderTools() {
   let html = '';
   TOOLS.sort((a,b) => a.order - b.order).forEach(t => {
-    html += '<a class="card" href="' + t.file + '" style="--accent:' + t.accent + '">';
+    html += '<a class="card" href="' + t.file + '" style="--accent:' + t.accent + '" data-tool="' + t.id + '" data-accent="' + t.accent + '">';
     html += '<div class="name">' + t.name + '</div>';
     html += '<div class="desc">' + t.desc + '</div>';
     html += '</a>';
   });
   document.getElementById('toolGrid').innerHTML = html;
+  bindCardClicks();
+  bindRailDots();
 }
 
+/* ── Card click: ripple → exit overlay → navigate ── */
+function bindCardClicks() {
+  document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('click', function(e) {
+      e.preventDefault();
+      let href = this.getAttribute('href');
+      let accent = this.getAttribute('data-accent') || '#fff';
+      let rect = this.getBoundingClientRect();
+      let cx = e.clientX, cy = e.clientY;
+
+      // Ripple from click point
+      let ripple = document.getElementById('ripple');
+      ripple.style.setProperty('--rx', cx + 'px');
+      ripple.style.setProperty('--ry', cy + 'px');
+      ripple.style.setProperty('--rc', accent);
+      ripple.classList.remove('go');
+      void ripple.offsetWidth;
+      ripple.classList.add('go');
+
+      // Exit overlay fades in
+      setTimeout(() => {
+        document.getElementById('exitOverlay').classList.add('active');
+      }, 250);
+
+      // Navigate
+      setTimeout(() => {
+        window.location.href = href;
+      }, 400);
+    });
+  });
+}
+
+/* ── Rail dots: quick jump ── */
+function bindRailDots() {
+  document.querySelectorAll('.rail-dot').forEach(dot => {
+    let toolId = dot.getAttribute('data-tool');
+    let tool = TOOLS.find(t => t.id === toolId);
+    if (!tool) return;
+    dot.addEventListener('click', () => {
+      let card = document.querySelector('.card[data-tool="' + toolId + '"]');
+      if (card) {
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        card.style.transform = 'scale(1.04)';
+        setTimeout(() => { card.style.transform = ''; }, 400);
+      } else {
+        window.location.href = tool.file;
+      }
+    });
+    dot.title = tool.name + ' — ' + tool.desc;
+  });
+}
+
+/* ── Preferences ── */
 function loadPrefs() {
   try {
     let d = localStorage.getItem('gwy_global_prefs');
