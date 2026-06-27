@@ -10,27 +10,25 @@
 <style>
 :root {
   --bg: #ececf1;
-  --card-bg: rgba(255,255,255,0.78);
-  --card-border: rgba(0,0,0,0.07);
+  --card-bg: rgba(255,255,255,0.72);
+  --card-border: rgba(0,0,0,0.06);
   --text: #1d1d1f;
   --text-secondary: #6e6e73;
   --text-tertiary: #aeaeb2;
   --fill: rgba(0,0,0,0.05);
-  --separator: rgba(0,0,0,0.08);
-  --radius: 18px;
+  --separator: rgba(0,0,0,0.07);
+  --radius: 20px;
   --spring: 0.35s cubic-bezier(0.22, 0.1, 0.2, 1);
-  --spring-open: 0.45s cubic-bezier(0.22, 0.45, 0.15, 1);
-  --spring-close: 0.38s cubic-bezier(0.35, 0, 0.2, 1);
 }
 [data-theme="dark"] {
   --bg: #161618;
-  --card-bg: rgba(38,38,40,0.8);
-  --card-border: rgba(255,255,255,0.07);
+  --card-bg: rgba(38,38,40,0.76);
+  --card-border: rgba(255,255,255,0.06);
   --text: #f5f5f7;
   --text-secondary: #98989d;
   --text-tertiary: #636366;
-  --fill: rgba(255,255,255,0.08);
-  --separator: rgba(255,255,255,0.1);
+  --fill: rgba(255,255,255,0.06);
+  --separator: rgba(255,255,255,0.08);
 }
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -43,9 +41,6 @@ body{
   min-height: 100vh;
   transition: background 0.4s ease;
   letter-spacing: -0.01em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   overflow-x: hidden;
 }
 
@@ -56,63 +51,58 @@ body{
 .atmo .orb{
   position: absolute;
   border-radius: 50%;
-  filter: blur(130px);
-  opacity: 0.45;
-  animation: orbDrift 22s ease-in-out infinite;
+  filter: blur(140px);
+  opacity: 0.35;
 }
 .atmo .orb:nth-child(1){
-  width: 55vw; height: 55vw;
-  background: radial-gradient(circle, rgba(140,120,240,0.16), transparent);
-  top: -20vh; left: -18vw;
+  width: 60vw; height: 60vw;
+  background: radial-gradient(circle, rgba(150,130,240,0.14), transparent);
+  top: -25vh; left: -20vw;
 }
 .atmo .orb:nth-child(2){
-  width: 45vw; height: 45vw;
-  background: radial-gradient(circle, rgba(100,160,230,0.12), transparent);
-  bottom: -15vh; right: -12vw;
-  animation-delay: -8s;
-}
-@keyframes orbDrift{
-  0%,100%{ transform: translate(0,0) scale(1); }
-  50%{ transform: translate(4vw,3vh) scale(1.1); }
+  width: 50vw; height: 50vw;
+  background: radial-gradient(circle, rgba(110,170,240,0.10), transparent);
+  bottom: -20vh; right: -15vw;
 }
 
 .grid-texture{
-  position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.2;
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.18;
   background-image:
     linear-gradient(var(--separator) 1px, transparent 1px),
     linear-gradient(90deg, var(--separator) 1px, transparent 1px);
   background-size: 80px 80px;
-  mask-image: radial-gradient(ellipse 60% 50% at 50% 50%, black 20%, transparent 70%);
-  -webkit-mask-image: radial-gradient(ellipse 60% 50% at 50% 50%, black 20%, transparent 70%);
+  mask-image: radial-gradient(ellipse 70% 55% at 50% 45%, black 15%, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 55% at 50% 45%, black 15%, transparent 70%);
 }
 
-/* ── Main container — everything centered ── */
+/* ── Layout fills the screen ── */
 .main{
   position: relative; z-index: 1;
-  width: 100%; max-width: 680px;
-  padding: 48px 24px 40px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 48px 36px 48px;
 }
 
-/* ── Header ── */
-.header{
-  text-align: center;
-  margin-bottom: 40px;
+/* ── Top bar ── */
+.topbar{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 38px;
+  flex-wrap: wrap;
+  gap: 16px;
 }
-.header h1{
-  font-size: 32px;
+.topbar h1{
+  font-size: 30px;
   font-weight: 700;
   letter-spacing: -0.03em;
   font-feature-settings: "kern" 1;
 }
-.header .sub{
-  font-size: 14px;
-  color: var(--text-tertiary);
-  margin-top: 6px;
-  font-weight: 400;
-  letter-spacing: -0.005em;
+
+.topbar-right{
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 /* ── Settings ── */
@@ -121,16 +111,14 @@ body{
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
-  justify-content: center;
-  margin-bottom: 36px;
-  padding: 10px 20px;
+  padding: 8px 16px;
   background: var(--card-bg);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   border: 0.5px solid var(--card-border);
-  border-radius: 24px;
+  border-radius: 22px;
+  animation: fadeUp 0.5s var(--spring) 0.1s forwards;
   opacity: 0;
-  animation: fadeUp 0.5s var(--spring) 0.15s forwards;
 }
 .settings label{
   font-size: 13px;
@@ -150,7 +138,7 @@ body{
 }
 [data-theme="dark"] .settings select, [data-theme="dark"] .settings input{ background: rgba(255,255,255,0.04); }
 .settings select:focus, .settings input:focus{ border-color: #0071e3; }
-.settings input{ width: 100px; }
+.settings input{ width: 96px; }
 .settings .save-btn{
   padding: 5px 16px;
   border: none;
@@ -163,8 +151,7 @@ body{
   cursor: pointer;
   transition: all var(--spring);
 }
-.settings .save-btn:hover{ opacity: 0.85; transform: scale(1.03); }
-.settings .hint{ font-size: 12px; color: var(--text-tertiary); }
+.settings .save-btn:hover{ opacity: 0.85; }
 
 .theme-btn{
   width: 36px; height: 36px;
@@ -180,23 +167,22 @@ body{
   justify-content: center;
   transition: all var(--spring);
   color: var(--text-secondary);
+  flex-shrink: 0;
 }
 .theme-btn:hover{ background: rgba(0,0,0,0.06); transform: scale(1.08); }
 
-/* ── Grid — centered, compact ── */
+/* ── Grid — fills available width ── */
 .grid{
-  width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 12px;
-  justify-content: center;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
 }
 
 /* ── Card ── */
 .card{
   display: flex;
   flex-direction: column;
-  padding: 20px 18px 18px;
+  padding: 28px 24px 24px;
   background: var(--card-bg);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
@@ -209,52 +195,62 @@ body{
   overflow: hidden;
   opacity: 0;
   animation: fadeUp 0.45s var(--spring) forwards;
-  transition: transform var(--spring), box-shadow var(--spring), border-color var(--spring);
+  transition: transform var(--spring), box-shadow var(--spring), border-color var(--spring), background var(--spring);
 }
-.card:nth-child(1){ animation-delay: 0.2s; }
-.card:nth-child(2){ animation-delay: 0.24s; }
-.card:nth-child(3){ animation-delay: 0.28s; }
-.card:nth-child(4){ animation-delay: 0.32s; }
-.card:nth-child(5){ animation-delay: 0.36s; }
+.card:nth-child(1){ animation-delay: 0.15s; }
+.card:nth-child(2){ animation-delay: 0.2s; }
+.card:nth-child(3){ animation-delay: 0.25s; }
+.card:nth-child(4){ animation-delay: 0.3s; }
+.card:nth-child(5){ animation-delay: 0.35s; }
 .card:nth-child(6){ animation-delay: 0.4s; }
-.card:nth-child(7){ animation-delay: 0.44s; }
+.card:nth-child(7){ animation-delay: 0.45s; }
 
-.card::after{
+/* Subtle tint from accent */
+.card::before{
   content: '';
   position: absolute;
-  left: 0; top: 12px; bottom: 12px;
-  width: 3px; border-radius: 0 3px 3px 0;
+  inset: 0;
+  background: radial-gradient(ellipse at 100% 0%, var(--accent-tint, transparent) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity var(--spring);
+}
+.card:hover::before{ opacity: 1; }
+
+/* Accent dot */
+.card .dot{
+  width: 10px; height: 10px;
+  border-radius: 50%;
   background: var(--accent, #ccc);
-  opacity: 0.45;
-  transition: opacity var(--spring), width var(--spring);
+  margin-bottom: 16px;
+  transition: transform var(--spring);
 }
-.card:hover{
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 14px 44px rgba(0,0,0,0.1), 0 0 0 1px var(--accent, rgba(0,0,0,0.1));
-  border-color: var(--accent, rgba(0,0,0,0.15));
-}
-.card:hover::after{ opacity: 1; width: 4px; }
-[data-theme="dark"] .card:hover{ box-shadow: 0 14px 44px rgba(0,0,0,0.5), 0 0 0 1px var(--accent, rgba(255,255,255,0.12)); }
+.card:hover .dot{ transform: scale(1.5); }
 
 .card .name{
-  font-size: 17px;
+  font-size: 19px;
   font-weight: 600;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   letter-spacing: -0.015em;
-  padding-left: 2px;
+  position: relative; z-index: 1;
 }
 .card .desc{
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-secondary);
   line-height: 1.5;
   flex: 1;
-  padding-left: 2px;
+  position: relative; z-index: 1;
 }
 
-/* ── iOS-style app open clone ── */
+.card:hover{
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.1), 0 0 0 1px var(--accent, rgba(0,0,0,0.08));
+  border-color: var(--accent, rgba(0,0,0,0.12));
+}
+[data-theme="dark"] .card:hover{ box-shadow: 0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px var(--accent, rgba(255,255,255,0.1)); }
+
+/* ── iOS app open ── */
 .app-clone{
-  position: fixed;
-  z-index: 1000;
+  position: fixed; z-index: 1000;
   background: var(--card-bg);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
@@ -262,47 +258,32 @@ body{
   border-radius: var(--radius);
   display: flex;
   flex-direction: column;
-  padding: 20px 18px 18px;
+  padding: 28px 24px 24px;
   overflow: hidden;
   pointer-events: none;
   transform-origin: center center;
 }
-.app-clone::after{
-  content: '';
-  position: absolute;
-  left: 0; top: 12px; bottom: 12px;
-  width: 3px; border-radius: 0 3px 3px 0;
+.app-clone .dot{
+  width: 10px; height: 10px;
+  border-radius: 50%;
   background: var(--accent, #ccc);
+  margin-bottom: 16px;
 }
 .app-clone.go{
   animation: appOpen 0.48s cubic-bezier(0.22, 0.45, 0.15, 1) forwards;
 }
 @keyframes appOpen{
-  0%{
-    transform: scale(1);
-    border-radius: var(--radius);
-  }
-  100%{
-    transform: scale(var(--sx), var(--sy));
-    border-radius: 0;
-  }
+  0%{ transform: scale(1); border-radius: var(--radius); }
+  100%{ transform: scale(var(--sx), var(--sy)); border-radius: 0; }
 }
 
-/* ── Scene dim ── */
 .scene-dim{
   position: fixed; inset: 0; z-index: 999;
   background: var(--bg);
-  opacity: 0;
-  pointer-events: none;
+  opacity: 0; pointer-events: none;
   transition: opacity 0.3s ease;
 }
 .scene-dim.go{ opacity: 1; }
-
-/* ── Animations ── */
-@keyframes fadeUp{
-  from{ opacity: 0; transform: translateY(16px); }
-  to{ opacity: 1; transform: translateY(0); }
-}
 
 /* ── Toast ── */
 .toast{
@@ -317,17 +298,19 @@ body{
 }
 .toast.out{ animation: toastOut 0.28s cubic-bezier(0.22,0.1,0.2,1) forwards; }
 
+@keyframes fadeUp{
+  from{ opacity: 0; transform: translateY(16px); }
+  to{ opacity: 1; transform: translateY(0); }
+}
 @keyframes toastIn{ from{ opacity:0; transform:translateX(-50%) translateY(14px); } to{ opacity:1; transform:translateX(-50%) translateY(0); } }
 @keyframes toastOut{ from{ opacity:1; transform:translateX(-50%) translateY(0); } to{ opacity:0; transform:translateX(-50%) translateY(14px); } }
 
-@media (max-width: 640px){
-  .main{ padding: 36px 16px 28px; }
-  .header h1{ font-size: 26px; }
-  .settings{ padding: 10px 14px; }
-  .grid{ grid-template-columns: 1fr 1fr; gap: 10px; }
-  .card{ padding: 16px 14px; }
-  .card .name{ font-size: 15px; }
-  .card .desc{ font-size: 12px; }
+@media (max-width: 720px){
+  .main{ padding: 32px 16px 36px; }
+  .topbar h1{ font-size: 24px; }
+  .grid{ grid-template-columns: 1fr; gap: 10px; }
+  .card{ padding: 22px 18px 18px; }
+  .settings{ width: 100%; justify-content: flex-start; }
 }
 </style>
 </head>
@@ -342,27 +325,26 @@ body{
 
 <div class="main">
 
-<div class="header">
+<div class="topbar">
   <h1>公考工具箱</h1>
-  <div class="sub">
+  <div class="topbar-right">
+    <div class="settings">
+      <label>专业</label>
+      <input type="text" id="setMajor" aria-label="专业" placeholder="政治学类">
+      <label>学历</label>
+      <select id="setEdu" aria-label="学历">
+        <option value="">不限</option>
+        <option>大专及以上</option>
+        <option>本科及以上</option>
+        <option>仅限本科</option>
+        <option>硕士及以上</option>
+      </select>
+      <label>省份</label>
+      <input type="text" id="setProvince" aria-label="意向省份" placeholder="青海">
+      <button class="save-btn" id="btnSavePrefs">保存</button>
+    </div>
     <button class="theme-btn" id="themeToggle" aria-label="切换主题">🌙</button>
   </div>
-</div>
-
-<div class="settings">
-  <label>专业</label>
-  <input type="text" id="setMajor" aria-label="专业" placeholder="政治学类">
-  <label>学历</label>
-  <select id="setEdu" aria-label="学历">
-    <option value="">不限</option>
-    <option>大专及以上</option>
-    <option>本科及以上</option>
-    <option>仅限本科</option>
-    <option>硕士及以上</option>
-  </select>
-  <label>省份</label>
-  <input type="text" id="setProvince" aria-label="意向省份" placeholder="青海">
-  <button class="save-btn" id="btnSavePrefs">保存偏好</button>
 </div>
 
 <div class="grid" id="toolGrid"></div>
@@ -373,19 +355,20 @@ body{
 "use strict";
 
 const TOOLS = [
-  { id:'table-norm', file:'table-norm.html', name:'TableNorm', desc:'列名标准化，16 个标准字段', accent:'#16a34a', order:1 },
-  { id:'data-veil', file:'DataVeil.html', name:'DataVeil', desc:'PII 脱敏，身份证/手机号打码', accent:'#3b82f6', order:2 },
-  { id:'sheet-lens', file:'SheetLens.html', name:'SheetLens', desc:'岗位筛选，5 维评分引擎', accent:'#e67e22', order:3 },
-  { id:'post-cmp', file:'post-cmp.html', name:'PostCmp', desc:'岗位对比，雷达图评分', accent:'#7c3aed', order:4 },
-  { id:'app-track', file:'app-track.html', name:'AppTrack', desc:'报名追踪，时间线提醒', accent:'#0891b2', order:5 },
-  { id:'exam-prep', file:'exam-prep.html', name:'ExamPrep', desc:'行测刷题，录音回放', accent:'#dc2626', order:6 },
-  { id:'policy-search', file:'policy-search.html', name:'PolicySearch', desc:'政策搜索，官网实时抓取', accent:'#8b5cf6', order:7 }
+  { id:'table-norm', file:'table-norm.html', name:'TableNorm', desc:'列名标准化，16 个标准字段，100+ 同义词自动匹配', accent:'#16a34a', tint:'rgba(22,163,74,0.06)', order:1 },
+  { id:'data-veil', file:'DataVeil.html', name:'DataVeil', desc:'PII 脱敏，身份证、手机号、银行卡、地址自动打码', accent:'#3b82f6', tint:'rgba(59,130,246,0.06)', order:2 },
+  { id:'sheet-lens', file:'SheetLens.html', name:'SheetLens', desc:'岗位筛选，5 维评分引擎，中国地图热力图', accent:'#e67e22', tint:'rgba(230,126,34,0.06)', order:3 },
+  { id:'post-cmp', file:'post-cmp.html', name:'PostCmp', desc:'岗位对比，雷达图加多维评分，智能推荐', accent:'#7c3aed', tint:'rgba(124,58,237,0.06)', order:4 },
+  { id:'app-track', file:'app-track.html', name:'AppTrack', desc:'报名追踪，时间线、材料清单、截止提醒', accent:'#0891b2', tint:'rgba(8,145,178,0.06)', order:5 },
+  { id:'exam-prep', file:'exam-prep.html', name:'ExamPrep', desc:'行测刷题，130 道题、录音回放、模拟面试', accent:'#dc2626', tint:'rgba(220,38,38,0.06)', order:6 },
+  { id:'policy-search', file:'policy-search.html', name:'PolicySearch', desc:'政策搜索，官网实时抓取，同义词扩展', accent:'#8b5cf6', tint:'rgba(139,92,246,0.06)', order:7 }
 ];
 
 function renderTools() {
   let html = '';
   TOOLS.sort((a,b) => a.order - b.order).forEach(t => {
-    html += '<a class="card" href="' + t.file + '" data-tool="' + t.id + '" data-accent="' + t.accent + '" style="--accent:' + t.accent + '">';
+    html += '<a class="card" href="' + t.file + '" data-tool="' + t.id + '" data-accent="' + t.accent + '" style="--accent:' + t.accent + ';--accent-tint:' + t.tint + '">';
+    html += '<div class="dot"></div>';
     html += '<div class="name">' + t.name + '</div>';
     html += '<div class="desc">' + t.desc + '</div>';
     html += '</a>';
@@ -394,7 +377,6 @@ function renderTools() {
   bindCardClicks();
 }
 
-/* ── iOS-style app open ── */
 function bindCardClicks() {
   document.querySelectorAll('.card').forEach(card => {
     card.addEventListener('click', function(e) {
@@ -405,39 +387,26 @@ function bindCardClicks() {
       let name = this.querySelector('.name').textContent;
       let desc = this.querySelector('.desc').textContent;
 
-      // Dim the scene
-      let dim = document.getElementById('sceneDim');
-      dim.classList.add('go');
-
-      // Calculate scale to fill viewport from card's center
       let vw = window.innerWidth, vh = window.innerHeight;
-      let sx = vw / rect.width;
-      let sy = vh / rect.height;
-      let scale = Math.max(sx, sy) * 1.05; // slight overshoot for smoothness
+      let scale = Math.max(vw / rect.width, vh / rect.height) * 1.05;
 
-      // Clone the card
+      document.getElementById('sceneDim').classList.add('go');
+
       let clone = document.createElement('div');
       clone.className = 'app-clone';
       clone.style.cssText = 'top:' + rect.top + 'px; left:' + rect.left + 'px; width:' + rect.width + 'px; height:' + rect.height + 'px; --accent:' + accent + '; --sx:' + scale + '; --sy:' + scale;
-      clone.innerHTML = '<div class="name" style="font-size:' + getComputedStyle(this.querySelector('.name')).fontSize + '">' + name + '</div><div class="desc">' + desc + '</div>';
+      clone.innerHTML = '<div class="dot"></div><div class="name" style="font-size:' + getComputedStyle(this.querySelector('.name')).fontSize + '">' + name + '</div><div class="desc">' + desc + '</div>';
       document.body.appendChild(clone);
 
-      // Animate: card stays in place, scales outward from its center
       requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          clone.classList.add('go');
-        });
+        requestAnimationFrame(() => { clone.classList.add('go'); });
       });
 
-      // Navigate at peak
-      setTimeout(() => {
-        window.location.href = href;
-      }, 420);
+      setTimeout(() => { window.location.href = href; }, 420);
     });
   });
 }
 
-/* ── Preferences ── */
 function loadPrefs() {
   try {
     let d = localStorage.getItem('gwy_global_prefs');
@@ -498,7 +467,7 @@ function init() {
   restorePrefs();
   document.getElementById('btnSavePrefs').addEventListener('click', savePrefs);
 
-  document.addEventListener('keydown', function(e) {
+  document.addEventListener('keydown', e => {
     if (e.ctrlKey && e.key === 's') { e.preventDefault(); savePrefs(); }
   });
 }
