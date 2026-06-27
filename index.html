@@ -242,11 +242,12 @@ body{
 }
 
 .card:hover{
-  transform: translateY(-4px);
-  box-shadow: 0 16px 48px rgba(0,0,0,0.1), 0 0 0 1px var(--accent, rgba(0,0,0,0.08));
-  border-color: var(--accent, rgba(0,0,0,0.12));
+  transform: translateY(-4px) scale(1.015);
+  box-shadow: 0 20px 56px rgba(0,0,0,0.12), 0 0 0 1px var(--accent, rgba(0,0,0,0.15));
+  border-color: var(--accent, rgba(0,0,0,0.2));
 }
-[data-theme="dark"] .card:hover{ box-shadow: 0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px var(--accent, rgba(255,255,255,0.1)); }
+.card:active{ transform: translateY(-2px) scale(1.005); transition: transform 0.1s var(--spring); }
+[data-theme="dark"] .card:hover{ box-shadow: 0 20px 56px rgba(0,0,0,0.55), 0 0 0 1px var(--accent, rgba(255,255,255,0.15)); }
 
 /* ── App open: card expands to fill screen ── */
 .app-clone{
