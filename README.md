@@ -1,7 +1,7 @@
 # GWY LaunchPad — 公考工具箱启动器
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.4.0-brightgreen)](https://github.com/kaXianc2-gom/gwy-launchpad/releases)
+[![Version](https://img.shields.io/badge/version-1.4.1-brightgreen)](https://github.com/kaXianc2-gom/gwy-launchpad/releases)
 [![Pages](https://img.shields.io/badge/demo-online-0078D4)](https://kaXianc2-gom.github.io/gwy-launchpad/)
 
 > 8 个工具的入口。设置一次偏好，所有工具自动读取。
