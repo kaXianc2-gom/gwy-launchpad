@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="公考工具箱 — 8个一站式备考工具，离线可用，数据不上传，全部开源免费">
+<meta name="theme-color" content="#e67e22">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏛</text></svg>">
 <title>公考工具箱 — GWY Toolkit</title>
 <style>
 :root {
@@ -95,14 +98,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 <!-- Global Settings -->
 <div class="settings-bar">
   <label>🎓 我的专业：</label>
-  <input type="text" id="setMajor" placeholder="如：政治学类" style="width:140px">
+  <input type="text" id="setMajor" aria-label="我的专业" placeholder="如：政治学类" style="width:140px">
   <label>📚 学历：</label>
-  <select id="setEdu">
+  <select id="setEdu" aria-label="学历">
     <option value="">不限</option><option>大专及以上</option><option>本科及以上</option><option>仅限本科</option><option>硕士及以上</option>
   </select>
   <label>📍 意向省份：</label>
-  <input type="text" id="setProvince" placeholder="如：青海" style="width:80px">
+  <input type="text" id="setProvince" aria-label="意向省份" placeholder="如：青海" style="width:80px">
   <button class="btn-save" id="btnSavePrefs" style="padding:6px 16px;background:#e67e22;color:#fff;border:none;border-radius:8px;font-weight:600;cursor:pointer;font-size:13px">💾 保存偏好</button>
+  <button id="themeToggle" style="padding:6px 12px;border:2px solid var(--border);border-radius:20px;background:var(--card);cursor:pointer;font-size:18px;transition:all var(--transition);margin-left:8px" aria-label="切换暗色/亮色主题" title="切换主题">🌙</button>
   <span style="font-size:11px;color:var(--muted)">（保存后所有工具自动读取）</span>
 </div>
 
@@ -116,10 +120,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 </div>
 
 <script>
+"use strict";
 // ═══════════════════════════════════════════════
 //  TOOL METADATA
 // ═══════════════════════════════════════════════
-var TOOLS = [
+const TOOLS = [
   { id:'table-norm', name:'TableNorm', icon:'🧹', tagline:'表格列名标准化 — 统一各省职位表格式', color:'#16a34a', version:'v1.0.0', github:'kaXianc2-gom/table-norm', status:'done', order:1 },
   { id:'data-veil', name:'DataVeil', icon:'🛡️', tagline:'PII数据脱敏 — 身份证/手机号/银行卡/地址打码', color:'#3b82f6', version:'v1.2.0', github:'kaXianc2-gom/data-veil', status:'done', order:2 },
   { id:'sheet-lens', name:'SheetLens', icon:'📊', tagline:'智能岗位筛选 — 5维评分+中国地图热力图', color:'#e67e22', version:'v1.1.0', github:'kaXianc2-gom/sheet-lens', status:'done', order:3 },
@@ -133,18 +138,23 @@ var TOOLS = [
 // ═══════════════════════════════════════════════
 //  RENDER
 // ═══════════════════════════════════════════════
-var GITHUB_BASE = 'https://github.com/';
+const GITHUB_BASE = 'https://github.com/';
 
 function renderTools() {
-  var html = '';
+  let html = '';
   TOOLS.sort(function(a,b){ return a.order - b.order; }).forEach(function(tool) {
-    html += '<a class="tool-card" href="' + GITHUB_BASE + tool.github + '" target="_blank" rel="noopener" style="--accent:' + tool.color + '">';
+    let localFile = tool.id === 'gwy-launchpad' ? 'gwy-launchpad.html' : tool.id + '.html';
+    if (tool.id === 'data-veil') localFile = 'DataVeil.html';
+    if (tool.id === 'sheet-lens') localFile = 'SheetLens.html';
+    let githubHref = GITHUB_BASE + tool.github;
+    html += '<a class="tool-card" href="' + localFile + '" title="打开本地工具" style="--accent:' + tool.color + '">';
     html += '<div class="tc-icon">' + tool.icon + '</div>';
     html += '<div class="tc-name">' + tool.name + '</div>';
     html += '<div class="tc-tagline">' + tool.tagline + '</div>';
     html += '<div class="tc-meta">';
     html += '<span class="tc-version">' + tool.version + '</span>';
     html += '<span class="tc-status tc-done">✅ 已发布</span>';
+    html += '<a class="tc-gh-link" href="' + githubHref + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="GitHub 仓库" style="font-size:11px;color:let(--muted);text-decoration:none;margin-left:auto">⭐</a>';
     html += '</div>';
     html += '</a>';
   });
@@ -156,13 +166,13 @@ function renderTools() {
 // ═══════════════════════════════════════════════
 function loadPrefs() {
   try {
-    var d = localStorage.getItem('gwy_global_prefs');
+    let d = localStorage.getItem('gwy_global_prefs');
     return d ? JSON.parse(d) : { major:'', edu:'', province:'' };
   } catch(e) { return { major:'', edu:'', province:'' }; }
 }
 
 function savePrefs() {
-  var prefs = {
+  let prefs = {
     major: document.getElementById('setMajor').value.trim(),
     edu: document.getElementById('setEdu').value,
     province: document.getElementById('setProvince').value.trim()
@@ -170,14 +180,14 @@ function savePrefs() {
   try { localStorage.setItem('gwy_global_prefs', JSON.stringify(prefs)); } catch(e) {}
   // Also save to SheetLens-compatible key
   try {
-    var sl = { theme: document.documentElement.getAttribute('data-theme')||'light', filters: { major: prefs.major, edu: prefs.edu, province: prefs.province } };
+    let sl = { theme: document.documentElement.getAttribute('data-theme')||'light', filters: { major: prefs.major, edu: prefs.edu, province: prefs.province } };
     localStorage.setItem('sheetlens_settings', JSON.stringify(sl));
   } catch(e) {}
   showToast('✅ 偏好已保存，所有工具将自动读取');
 }
 
 function restorePrefs() {
-  var p = loadPrefs();
+  let p = loadPrefs();
   document.getElementById('setMajor').value = p.major || '';
   document.getElementById('setEdu').value = p.edu || '';
   document.getElementById('setProvince').value = p.province || '';
@@ -187,9 +197,9 @@ function restorePrefs() {
 //  TOAST
 // ═══════════════════════════════════════════════
 function showToast(msg) {
-  var el = document.createElement('div');
+  let el = document.createElement('div');
   el.style.cssText = 'position:fixed;bottom:32px;left:50%;transform:translateX(-50%);z-index:9999;padding:12px 24px;border-radius:24px;font-size:14px;font-weight:600;color:#fff;background:#16a34a;box-shadow:0 8px 24px rgba(0,0,0,0.2);animation:toastIn .3s ease';
-  el.textContent = msg;
+  el.setAttribute('role','status');el.textContent = msg;
   document.body.appendChild(el);
   setTimeout(function() {
     el.style.animation = 'toastOut .3s ease forwards';
@@ -203,14 +213,16 @@ function showToast(msg) {
 function init() {
   // Theme
   try {
-    var tm = localStorage.getItem('gwy_launchpad_theme');
+    let tm = localStorage.getItem('gwy_launchpad_theme');
     if (tm === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+  document.getElementById('themeToggle').textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
   } catch(e) {}
-  // Dark mode toggle via double-click on hero icon
-  document.querySelector('.hero-icon').addEventListener('dblclick', function() {
-    var cur = document.documentElement.getAttribute('data-theme');
-    var next = cur === 'dark' ? '' : 'dark';
+  // Theme toggle button (visible in settings bar)
+  document.getElementById('themeToggle').addEventListener('click', function() {
+    let cur = document.documentElement.getAttribute('data-theme');
+    let next = cur === 'dark' ? '' : 'dark';
     document.documentElement.setAttribute('data-theme', next);
+    document.getElementById('themeToggle').textContent = next ? '☀️' : '🌙';
     try { localStorage.setItem('gwy_launchpad_theme', next || 'light'); } catch(e) {}
   });
 
@@ -225,7 +237,7 @@ function init() {
 }
 
 // Add toast animation styles
-var toastStyle = document.createElement('style');
+let toastStyle = document.createElement('style');
 toastStyle.textContent = '@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(16px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}@keyframes toastOut{from{opacity:1;transform:translateX(-50%) translateY(0)}to{opacity:0;transform:translateX(-50%) translateY(16px)}}';
 document.head.appendChild(toastStyle);
 
