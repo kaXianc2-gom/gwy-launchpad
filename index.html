@@ -248,31 +248,48 @@ body{
 }
 [data-theme="dark"] .card:hover{ box-shadow: 0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px var(--accent, rgba(255,255,255,0.1)); }
 
-/* ── iOS app open: expanding circle from card center ── */
-.app-open{
+/* ── App open: card expands to fill screen ── */
+.app-clone{
   position: fixed; z-index: 1000;
-  border-radius: 50%;
-  background: var(--accent, #0071e3);
+  background: var(--card-bg);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 0.5px solid var(--card-border);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  padding: 28px 24px 24px;
+  overflow: hidden;
   pointer-events: none;
-  width: 0; height: 0;
-  transform: translate(-50%, -50%);
+  transform-origin: 0 0;
 }
-.app-open.go{
-  animation: circleExpand 0.5s cubic-bezier(0.22, 0.45, 0.15, 1) forwards;
+.app-clone .dot{
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--accent, #ccc);
+  margin-bottom: 16px;
 }
-@keyframes circleExpand{
-  0%{ width: 0; height: 0; opacity: 0.9; }
-  40%{ opacity: 0.7; }
-  100%{ width: var(--cd); height: var(--cd); opacity: 0; }
+.app-clone.go{
+  animation: appOpen 0.7s cubic-bezier(0.2, 0, 0, 1) forwards;
+}
+@keyframes appOpen{
+  0%{
+    transform: translate(0, 0) scale(1, 1);
+    border-radius: var(--radius);
+  }
+  100%{
+    transform: translate(var(--dx), var(--dy)) scale(var(--sx), var(--sy));
+    border-radius: 0;
+  }
 }
 
 .scene-dim{
   position: fixed; inset: 0; z-index: 999;
   background: var(--bg);
   opacity: 0; pointer-events: none;
-  transition: opacity 0.25s ease;
+  transition: opacity 0.3s ease 0.15s;
 }
-.scene-dim.go{ opacity: 1; transition: opacity 0.2s ease 0.25s; }
+.scene-dim.go{ opacity: 1; transition: opacity 0.3s ease; }
 
 /* ── Toast ── */
 .toast{
@@ -373,25 +390,42 @@ function bindCardClicks() {
       let href = this.getAttribute('href');
       let accent = this.getAttribute('data-accent') || '#0071e3';
       let rect = this.getBoundingClientRect();
-      let cx = rect.left + rect.width / 2;
-      let cy = rect.top + rect.height / 2;
+      let name = this.querySelector('.name').textContent;
+      let desc = this.querySelector('.desc').textContent;
       let vw = window.innerWidth, vh = window.innerHeight;
-      let diameter = Math.ceil(Math.sqrt(vw*vw + vh*vh)) * 2; // twice diagonal to cover corners
 
-      // Expanding circle from card center
-      let circle = document.createElement('div');
-      circle.className = 'app-open';
-      circle.style.cssText = 'top:' + cy + 'px; left:' + cx + 'px; --accent:' + accent + '; --cd:' + diameter + 'px';
-      document.body.appendChild(circle);
+      // Card starts at (left, top), expands to fill (0, 0, vw, vh)
+      // transform-origin: 0 0 (top-left of the card)
+      // translate(-left, -top) moves top-left to (0,0)
+      // scale(vw/width, vh/height) fills the viewport
+      let dx = -rect.left;
+      let dy = -rect.top;
+      let sx = vw / rect.width;
+      let sy = vh / rect.height;
 
       // Dim behind
       document.getElementById('sceneDim').classList.add('go');
 
+      // Clone the card
+      let clone = document.createElement('div');
+      clone.className = 'app-clone';
+      clone.style.cssText =
+        'top:' + rect.top + 'px; left:' + rect.left + 'px;' +
+        'width:' + rect.width + 'px; height:' + rect.height + 'px;' +
+        '--accent:' + accent + ';' +
+        '--dx:' + dx + 'px; --dy:' + dy + 'px;' +
+        '--sx:' + sx + '; --sy:' + sy;
+      clone.innerHTML =
+        '<div class="dot"></div>' +
+        '<div class="name">' + name + '</div>' +
+        '<div class="desc">' + desc + '</div>';
+      document.body.appendChild(clone);
+
       requestAnimationFrame(() => {
-        requestAnimationFrame(() => { circle.classList.add('go'); });
+        requestAnimationFrame(() => { clone.classList.add('go'); });
       });
 
-      setTimeout(() => { window.location.href = href; }, 440);
+      setTimeout(() => { window.location.href = href; }, 620);
     });
   });
 }
